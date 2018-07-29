@@ -1,0 +1,185 @@
+var serverResponse = {
+	givenSubjectList : [
+		"User",
+		"User ",
+		"STO Account "
+	],
+	whenSubjectList : [
+		"User",
+		"BU ",
+		"System"
+	],
+	thenSubjectList : [
+		"System",
+		"Screen  ",
+		"Account "
+	],
+	verbList : [
+		"is",
+		"has",
+		"is a"
+	]
+};
+
+
+var html = getGivenVerbColumn(serverResponse.givenSubjectList,serverResponse.verbList);
+$("#given-list").append(html);
+html = getWhenThenList(serverResponse.whenSubjectList,serverResponse.thenSubjectList,serverResponse.verbList);
+console.log(html);
+$("#when-then-list").append(html);
+
+
+function removeSpace(message){
+    return message.replace(/ /g,"");
+}
+function getVerbColumn(verbList,forId){
+    var verbId = "verb-"+forId;
+    var dataFor = forId;
+    html= "";
+    html = "<div class = 'col-md-6'>";
+        html+="<select class= 'given-verb verb'id = '"+verbId+"'>";
+        for(var i = 0;i<verbList.length;i++){
+            html+="<option value = '"+verbList[i]+"'>"+verbList[i]+"</option>";
+        }
+        html +="</select>";
+    html +="</div>";
+    return html;
+}
+function getGivenColumn(givenStatement,rowNo,givenId){
+    var html = "";
+    var verbId = "verb-"+givenId;
+    html = "<div class = 'checkbox col-md-6'>";
+        html += "<label> ";
+            html += "<input data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+givenId+"' class='checkbox subject given-subject' value = '"+givenStatement+"'>";
+            html += givenStatement ;
+        html += "</label>";
+    html+="</div>";
+    return html;
+}
+function getGivenRow(givenStatement,verbList,rowNo){
+    var html = "";
+    var givenId = "given-subject-"+removeSpace(givenStatement)+rowNo;
+    html = "<div class = 'row' >";
+        html += getGivenColumn(givenStatement,rowNo,givenId);
+        html += getVerbColumn(verbList,givenId);
+    html+="</div>";
+    return html;
+}
+ function getGivenVerbColumn(givenList,verbList){
+     var html = "";
+     for(var i = 0;i<givenList.length;i++){
+         console.log(givenList[i]);
+         html+=getGivenRow(givenList[i],verbList,i);
+     }
+     return html;
+ }
+
+
+function getWhenCheckboxAndList(whenStatement,verbList,rowNo,listNo){
+    var html = "";
+    var whenId = "when-"+removeSpace(whenStatement)+"-"+rowNo+"-"+listNo;
+    var verbId = "verb-"+whenId;
+    html = "<div class = 'checkbox col-md-6'>";
+        html += "<label> ";
+            html += "<input data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+whenId+"' class='checkbox subject when-subject' value = '"+whenStatement+"'>";
+            html += whenStatement ;
+        html += "</label>";
+    html+="</div>";
+    
+    html += "<div class='col-md-6'>";
+        html+="<select class= 'when-verb verb'id = '"+verbId+"'>";
+        for(var i = 0;i<verbList.length;i++){
+            html+="<option value = '"+verbList[i]+"'>"+verbList[i]+"</option>";
+        }
+        html +="</select>";
+    html +="</div>";
+    return html;
+}
+function getThenCheckboxAndList(thenStatement,verbList,rowNo,listNo){
+    var html = "";
+    var thenId = "when-"+removeSpace(thenStatement)+"-"+rowNo+"-"+listNo;
+    var verbId = "verb-"+thenId;
+    html = "<div class = 'checkbox col-md-6'>";
+        html += "<label> ";
+            html += "<input data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+thenId+"' class='checkbox subject then-subject' value = '"+thenStatement+"'>";
+            html += thenStatement ;
+        html += "</label>";
+    html+="</div>";
+    
+    html += "<div class='col-md-6'>";
+        html+="<select class= 'then-verb verb'id = '"+verbId+"'>";
+        for(var i = 0;i<verbList.length;i++){
+            html+="<option value = '"+verbList[i]+"'>"+verbList[i]+"</option>";
+        }
+        html +="</select>";
+    html +="</div>";
+    return html;
+}
+
+
+function getWhenCheckboxList(whenList,verbList,listNo){
+    var html = "";
+    for(var i = 0;i<whenList.length;i++){
+        var whenStatement= whenList[i];
+        html+="<div class='row'>";
+            html+=getWhenCheckboxAndList(whenStatement,verbList,i,listNo);
+        html +="</div>";
+    }
+    return html;
+}
+function getThenCheckboxList(thenList,verbList,listNo){
+    var html = "";
+    for(var i = 0;i<thenList.length;i++){
+        var thenStatement= thenList[i];
+        html+="<div class='row'>";
+            html+=getThenCheckboxAndList(thenStatement,verbList,i,listNo);
+        html +="</div>";
+    }
+    return html;
+}
+function getWhenThenColumn(whenList,thenList,verbList,listNo){
+    var html = "<div class= 'col-md-6'>";
+        html+=getWhenCheckboxList(whenList,verbList,listNo);
+        html += getThenCheckboxList(thenList,verbList,listNo);
+    html="</div>";
+    return html;
+}
+function getWhenThenList(whenList,thenList,verbList){
+    var html = "";
+    var i;
+    for( i = 0;i<whenList.length;i++){
+        if(i%2 == 0){
+            console.log("row started");
+            html += "<div class = 'row'>";
+        }
+        console.log("column");
+        html+=getWhenThenColumn(whenList,thenList,verbList,i);
+        if(i%2 ==1){
+            console.log("row ended");
+            html+="</div>";
+        }
+    }
+    if(i%2 ==1){
+            console.log("row ended");
+            html+="</div>";
+        }
+    return html;
+}
+
+function fetchGivenList(){
+    var givenSubjectElements = $(".given-subject:checkbox:checked");
+    var givenList = Array();
+    for(var i = 0;i<givenSubjectElements.length;i++){
+        var element = givenSubjectElements[i];
+        var givenStmt = element.value;
+        var verbId = $("#"+element.id).data("target-verb");
+        var verbStmt = $("#"+verbId).find(":selected").text();;
+        var temp = new Object();
+        givenList[i] = new Object();
+        givenList[i].subject=givenStmt;
+        givenList[i].verb=verbStmt;
+        console.log("Given :"+givenStmt+" "+verbStmt);
+        //givenList[i] = (temp);
+    }
+    return givenList;
+}
