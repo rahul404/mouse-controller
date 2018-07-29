@@ -25,7 +25,6 @@ var serverResponse = {
 var html = getGivenVerbColumn(serverResponse.givenSubjectList,serverResponse.verbList);
 $("#given-list").append(html);
 html = getWhenThenList(serverResponse.whenSubjectList,serverResponse.thenSubjectList,serverResponse.verbList);
-console.log(html);
 $("#when-then-list").append(html);
 
 
@@ -81,7 +80,7 @@ function getWhenCheckboxAndList(whenStatement,verbList,rowNo,listNo){
     var verbId = "verb-"+whenId;
     html = "<div class = 'checkbox col-md-6'>";
         html += "<label> ";
-            html += "<input data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+whenId+"' class='checkbox subject when-subject' value = '"+whenStatement+"'>";
+            html += "<input data-list-id = "+listNo+" data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+whenId+"' class='checkbox subject when-subject' value = '"+whenStatement+"'>";
             html += whenStatement ;
         html += "</label>";
     html+="</div>";
@@ -97,11 +96,11 @@ function getWhenCheckboxAndList(whenStatement,verbList,rowNo,listNo){
 }
 function getThenCheckboxAndList(thenStatement,verbList,rowNo,listNo){
     var html = "";
-    var thenId = "when-"+removeSpace(thenStatement)+"-"+rowNo+"-"+listNo;
+    var thenId = "then-"+removeSpace(thenStatement)+"-"+rowNo+"-"+listNo;
     var verbId = "verb-"+thenId;
     html = "<div class = 'checkbox col-md-6'>";
         html += "<label> ";
-            html += "<input data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+thenId+"' class='checkbox subject then-subject' value = '"+thenStatement+"'>";
+            html += "<input data-list-id = "+listNo+" data-target-verb ='"+verbId+"' type = 'checkbox' id ='"+thenId+"' class='checkbox subject then-subject' value = '"+thenStatement+"'>";
             html += thenStatement ;
         html += "</label>";
     html+="</div>";
@@ -139,9 +138,14 @@ function getThenCheckboxList(thenList,verbList,listNo){
 }
 function getWhenThenColumn(whenList,thenList,verbList,listNo){
     var html = "<div class= 'col-md-6'>";
+        html+= "<div class='row'><h3> When Then "+(listNo+1)+"</h3></div>";
+        html+="<div class='col-md-6'>";    
         html+=getWhenCheckboxList(whenList,verbList,listNo);
+        html+="</div>";
+        html+="<div class='col-md-6'>";
         html += getThenCheckboxList(thenList,verbList,listNo);
-    html="</div>";
+        html+="</div>";
+    html +="</div>";
     return html;
 }
 function getWhenThenList(whenList,thenList,verbList){
@@ -154,6 +158,7 @@ function getWhenThenList(whenList,thenList,verbList){
         }
         console.log("column");
         html+=getWhenThenColumn(whenList,thenList,verbList,i);
+        //console.log("html = "+html);
         if(i%2 ==1){
             console.log("row ended");
             html+="</div>";
@@ -182,4 +187,9 @@ function fetchGivenList(){
         //givenList[i] = (temp);
     }
     return givenList;
+}
+
+function fetchWhenThenList(){
+    var whenThenList = new Object();
+    $(".")
 }
